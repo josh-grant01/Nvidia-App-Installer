@@ -5,5 +5,5 @@
 :: Modified: 10/29/26
 ::
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0\\ucsarch\apps`$\Drivers\Install-NvidiaApp.ps1" %*
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "\\ucsarch\apps$\Drivers\Install-NvidiaApp.ps1" %*
 exit /b %errorlevel%
