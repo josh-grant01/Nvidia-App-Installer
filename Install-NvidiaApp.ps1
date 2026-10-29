@@ -33,7 +33,7 @@ param (
     [switch]$Verbose,
     [switch]$DryRun,
     [switch]$Force,
-    [string]$Edition = "Public"
+    [string]$Edition = "Enterprise"
 )
 
 function Get-NvidiaDownloadLink {
@@ -128,7 +128,7 @@ function Install-NvidiaApp {
         [switch]$Verbose,
         [switch]$DryRun,
         [switch]$Force,
-        [string]$Edition = "Public"
+        [string]$Edition = "Enterprise"
     )
 
     Write-Verbose "Script parameters:"
@@ -228,4 +228,4 @@ if ($Verbose) {
     $VerbosePreference = "Continue"
 }
 
-Install-NvidiaApp -Verbose:$Verbose -DryRun:$DryRun -Force:$Force -Edition $Edition
+Install-NvidiaApp -Verbose:$Verbose -Edition $Edition -Force:$Force
