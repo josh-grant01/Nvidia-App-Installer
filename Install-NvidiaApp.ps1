@@ -33,7 +33,7 @@ param (
     [switch]$Verbose,
     [switch]$DryRun,
     [switch]$Force,
-    [string]$Edition = "Enterprise"
+    [string]$Edition = "Public"
 )
 
 function Get-NvidiaDownloadLink {
@@ -62,12 +62,8 @@ function Get-RemoteFileSize {
         [string]$url
     )
     Write-Verbose "Getting remote file size for URL: $url"
-    $response = Invoke-WebRequest -Uri $url -Method Head
-    $remoteFileSize = $response.Headers['Content-Length']
+    $remoteFileSize = (Invoke-WebRequest -Uri $url -Method Head).Headers['Content-Length']
     if ($remoteFileSize) {
-        if ($remoteFileSize -is [array]) {
-            $remoteFileSize = $remoteFileSize[0]
-        }
         return [int64]$remoteFileSize
     } else {
         Write-Warning "Could not determine the remote file size."
@@ -128,7 +124,7 @@ function Install-NvidiaApp {
         [switch]$Verbose,
         [switch]$DryRun,
         [switch]$Force,
-        [string]$Edition = "Enterprise"
+        [string]$Edition = "Public"
     )
 
     Write-Verbose "Script parameters:"
@@ -174,18 +170,14 @@ function Install-NvidiaApp {
 
         $installedVersion = Get-InstalledNvidiaAppVersion
 
-        $output = [PSCustomObject]@{
-            GPUModel       = $gpuModel
-            URL            = $downloadLink
-            Filename       = $fileName
-            SizeOfPackage  = "$remoteFileSize bytes ($remoteFileSizeMiB MiB)"
-            Version        = $version
-            InstallCommand = "Start-Process -FilePath `"$installerPath`" -ArgumentList `"$installParams`" -Wait"
-        }
-
         if ($DryRun) {
             Write-Output "Dry run mode: Skipping download and installation."
-            return $output
+            Write-Output "GPU Model: $gpuModel"
+            Write-Output "URL: $downloadLink"
+            Write-Output "Filename: $fileName"
+            Write-Output "Size of package: $remoteFileSize bytes ($remoteFileSizeMiB MiB)"
+            Write-Output "Version: $version"
+            Write-Output "Install command: Start-Process -FilePath ""$installerPath"" -ArgumentList ""$installParams"" -Wait"
         }
 
         if ($installedVersion -and $installedVersion -eq $version -and -not $Force) {
@@ -228,4 +220,4 @@ if ($Verbose) {
     $VerbosePreference = "Continue"
 }
 
-Install-NvidiaApp -Verbose:$Verbose -Edition $Edition -Force:$Force
+Install-NvidiaApp -Verbose:$Verbose -DryRun:$DryRun -Force:$Force -Edition $Edition
